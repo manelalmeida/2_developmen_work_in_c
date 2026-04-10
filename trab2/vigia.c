@@ -78,6 +78,61 @@ dynvec* dynvec_filter(dynvec *v, bool (*predicate)(void *)) {
     return novo;
 }
 
+void swap(void *a, void *b, size_t size) {
+    char temp[size];
+    memcpy(temp, a, size);
+    memcpy(a, b, size);
+    memcpy(b, temp, size);
+}
+
+int partition(dynvec *v, int low, int high, int (*cmp)(const void *, const void *)) {
+
+    char *base = (char *)v->data;
+    size_t size = v->elem_size;
+
+    void *pivot = base + high * size;
+
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+
+        void *elem_j = base + j * size;
+
+        if (cmp(elem_j, pivot) < 0) {
+            i++;
+            void *elem_i = base + i * size;
+            swap(elem_i, elem_j, size);
+        }
+    }
+
+    void *elem_i1 = base + (i + 1) * size;
+    swap(elem_i1, pivot, size);
+
+    return i + 1;
+}
+
+void quicksort_rec(dynvec *v, int low, int high, int (*cmp)(const void *, const void *)) {
+
+    if (low < high) {
+
+        int pi = partition(v, low, high, cmp);
+
+        quicksort_rec(v, low, pi - 1, cmp);
+        quicksort_rec(v, pi + 1, high, cmp);
+    }
+}
+
+void quicksort_dynvec(dynvec *v, int (*cmp)(const void *, const void *)){
+
+   if (v->length > 1) {
+        quicksort_rec(v, 0, v->length - 1, cmp);
+    } 
+}
+
+int cmp_lexicografico(const void *a, const void *b){
+
+}
+
 typedef struct {
     
     int x;
@@ -90,18 +145,20 @@ typedef struct {
     Ponto p2;
 } Aresta;
 
-int cmp_lexicografico(const void *a, const void *b){
-
-}
-
 int calcula_det(Ponto A, Ponto B, Ponto P){
 
 }
 
 void processa_regiao(Ponto A, Ponto B, dynvec *candidatos, dynvec *arestas_finais){
-    
+
 }
 
 int main(){
 
+    dynvec *v = dynvec_create(sizeof(Ponto));
+
+    quicksort_dynvec(v, cmp_lexicografico);
+
+    dynvec_free(v);
+    return 0;
 }
